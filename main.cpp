@@ -14,12 +14,17 @@ extern "C" {
     void _init(void) {
         void* handle = dlopen("libminecraftpe.so", RTLD_LAZY);
         if (handle) {
-            void* sym = dlsym(handle, "?setupFog@LevelRenderer@@QEAAXAEAVRenderContext@@AEAVCamera@@M@Z");
-            if (!sym) {
-                sym = dlsym(handle, "?renderFog@@YAXAEAVRenderContext@@M@Z");
-            }
-            if (sym) {
-                patch_memory((uintptr_t)sym, 0xD65F03C0);
+            const char* symbols[] = {
+                "?setupFog@LevelRenderer@@QEAAXAEAVRenderContext@@AEAVCamera@@M@Z",
+                "?renderFog@@YAXAEAVRenderContext@@M@Z",
+                "?setupFog@FogManager@@QEAAXAEAVRenderContext@@AEAVCamera@@M@Z"
+            };
+            for (int i = 0; i < 3; i++) {
+                void* sym = dlsym(handle, symbols[i]);
+                if (sym) {
+                    patch_memory((uintptr_t)sym, 0xD65F03C0);
+                    break;
+                }
             }
         }
     }
