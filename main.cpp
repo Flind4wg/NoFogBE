@@ -14,10 +14,12 @@ extern "C" {
     void _init(void) {
         void* handle = dlopen("libminecraftpe.so", RTLD_LAZY);
         if (handle) {
-            void* sym = dlsym(handle, "?getFogDistanceScale@RenderGeometryData@@QEBAMXZ");
+            void* sym = dlsym(handle, "?_setupFog@@YAXAEAVRenderContext@@M@Z");
+            if (!sym) {
+                sym = dlsym(handle, "?setupFog@RenderDragon@@YAXAEAVRenderContext@@M@Z");
+            }
             if (sym) {
-                patch_memory((uintptr_t)sym, 0x52800000);
-                patch_memory((uintptr_t)sym + 4, 0xD65F03C0);
+                patch_memory((uintptr_t)sym, 0xD65F03C0);
             }
         }
     }
