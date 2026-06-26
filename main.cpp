@@ -1,14 +1,13 @@
-
 #include <sys/mman.h>
 #include <unistd.h>
 #include <dlfcn.h>
 #include <stdint.h>
 
 void patch_memory(uintptr_t address, uint32_t value) {
-    uintptr_t page = address & ~(PAGE_SIZE - 1);
-    mprotect((void*)page, PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC);
+    uintptr_t page = address & ~(4096 - 1);
+    mprotect((void*)page, 4096, PROT_READ | PROT_WRITE | PROT_EXEC);
     *(uint32_t*)address = value;
-    mprotect((void*)page, PAGE_SIZE, PROT_READ | PROT_EXEC);
+    mprotect((void*)page, 4096, PROT_READ | PROT_EXEC);
 }
 
 extern "C" {
